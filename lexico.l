@@ -17,6 +17,23 @@ int comment_col;
 int comment_level = 0;
 int first = 1;
 
+char linha_buffer[1024];
+int pos_buffer = 0;
+
+void add_buffer(const char *txt) {
+
+    if(txt[0] == '\n' || txt[0] == '\r')
+        return;
+
+    int len = strlen(txt);
+
+    for(int i = 0; i < len; i++) {
+        linha_buffer[pos_buffer++] = txt[i];
+    }
+
+    linha_buffer[pos_buffer] = '\0';
+}
+
 void print_token(const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
@@ -32,124 +49,207 @@ void print_token(const char* fmt, ...) {
 
 %%
 
-0[xX][0-9a-fA-F]+           { coluna += yyleng; return NUM_HEXA; }
-0[0-7]                      { coluna += yyleng; return NUM_OCTAL; }
-[0-9]+                      { coluna += yyleng; return NUM_INTEGER; }
-\'([^\\\n]|(\\.))\'         { return CHARACTER; }
-\"([^"\\\n]|\\.)*\"         { coluna += yyleng; return STRING; }
+0[xX][0-9a-fA-F]+           { add_buffer(yytext); coluna += yyleng; return NUM_HEXA; }
+0[0-7]                      { add_buffer(yytext); coluna += yyleng; return NUM_OCTAL; }
+[0-9]+                      { add_buffer(yytext); coluna += yyleng; return NUM_INTEGER; }
+
+\'([^\\\n]|(\\.))\'         { add_buffer(yytext); coluna += yyleng; return CHARACTER; }
+
+\"([^"\\\n]|\\.)*\"         { add_buffer(yytext); coluna += yyleng; return STRING; }
 
 
-void          { coluna += yyleng; return VOID; }
-int           { coluna += yyleng; return INT; }
-char          { coluna += yyleng; return CHAR; }
-return        { coluna += yyleng; return RETURN; }
-break         { coluna += yyleng; return BREAK; }
-switch        { coluna += yyleng; return SWITCH; }
-case          { coluna += yyleng; return CASE; }
-default       { coluna += yyleng; return DEFAULT; }
-do            { coluna += yyleng; return DO; }
-while         { coluna += yyleng; return WHILE; }
-for           { coluna += yyleng; return FOR; }
-if            { coluna += yyleng; return IF; }
-else          { coluna += yyleng; return ELSE; }
-typedef       { coluna += yyleng; return TYPEDEF; }
-struct        { coluna += yyleng; return STRUCT; }
-"++"          { coluna += yyleng; return INC; }
-"--"          { coluna += yyleng; return DEC; }
-"&&"          { coluna += yyleng; return LOGICAL_AND; }
-"||"          { coluna += yyleng; return LOGICAL_OR; }
-"=="          { coluna += yyleng; return EQUAL; }
-"!="          { coluna += yyleng; return NOT_EQUAL; }
-"<="          { coluna += yyleng; return LESS_EQUAL; }
-">="          { coluna += yyleng; return GREATER_EQUAL; }
-">>"          { coluna += yyleng; return R_SHIFT; }
-"<<"          { coluna += yyleng; return L_SHIFT; }
-"+="          { coluna += yyleng; return ADD_ASSIGN; }
-"-="          { coluna += yyleng; return MINUS_ASSIGN; }
-"+"           { coluna += yyleng; return PLUS; }
-"-"           { coluna += yyleng; return MINUS; }
-"*"           { coluna += yyleng; return MULTIPLY; }
-"/"           { coluna += yyleng; return DIV; }
-"%"           { coluna += yyleng; return REMAINDER; }
-"&"           { coluna += yyleng; return BITWISE_AND; }
-"|"           { coluna += yyleng; return BITWISE_OR; }
-"~"           { coluna += yyleng; return BITWISE_NOT; }
-"^"           { coluna += yyleng; return BITWISE_XOR; }
-"!"           { coluna += yyleng; return NOT; }
-"<"           { coluna += yyleng; return LESS_THAN; }
-">"           { coluna += yyleng; return GREATER_THAN; }
-"="           { coluna += yyleng; return ASSIGN; }
-";"           { coluna += yyleng; return SEMICOLON; }
-","           { coluna += yyleng; return COMMA; }
-":"           { coluna += yyleng; return COLON; }
-"("           { coluna += yyleng; return L_PAREN; }
-")"           { coluna += yyleng; return R_PAREN; }
-"{"           { coluna += yyleng; return L_CURLY_BRACKET; }
-"}"           { coluna += yyleng; return R_CURLY_BRACKET; }
-"["           { coluna += yyleng; return L_SQUARE_BRACKET; }
-"]"           { coluna += yyleng; return R_SQUARE_BRACKET; }
-"?"           { coluna += yyleng; return TERNARY_CONDITIONAL; }
-"#"           { coluna += yyleng; return NUMBER_SIGN; }
-"->"          { coluna += yyleng; return POINTER; }
-printf        { coluna += yyleng; return PRINTF; }
-scanf         { coluna += yyleng; return SCANF; }
-define        { coluna += yyleng; return DEFINE; }
-exit          { coluna += yyleng; return EXIT; }
+void          { add_buffer(yytext); coluna += yyleng; return VOID; }
+int           { add_buffer(yytext); coluna += yyleng; return INT; }
+char          { add_buffer(yytext); coluna += yyleng; return CHAR; }
+return        { add_buffer(yytext); coluna += yyleng; return RETURN; }
+break         { add_buffer(yytext); coluna += yyleng; return BREAK; }
+switch        { add_buffer(yytext); coluna += yyleng; return SWITCH; }
+case          { add_buffer(yytext); coluna += yyleng; return CASE; }
+default       { add_buffer(yytext); coluna += yyleng; return DEFAULT; }
+do            { add_buffer(yytext); coluna += yyleng; return DO; }
+while         { add_buffer(yytext); coluna += yyleng; return WHILE; }
+for           { add_buffer(yytext); coluna += yyleng; return FOR; }
+if            { add_buffer(yytext); coluna += yyleng; return IF; }
+else          { add_buffer(yytext); coluna += yyleng; return ELSE; }
+typedef       { add_buffer(yytext); coluna += yyleng; return TYPEDEF; }
+struct        { add_buffer(yytext); coluna += yyleng; return STRUCT; }
+
+"++"          { add_buffer(yytext); coluna += yyleng; return INC; }
+"--"          { add_buffer(yytext); coluna += yyleng; return DEC; }
+"&&"          { add_buffer(yytext); coluna += yyleng; return LOGICAL_AND; }
+"||"          { add_buffer(yytext); coluna += yyleng; return LOGICAL_OR; }
+"=="          { add_buffer(yytext); coluna += yyleng; return EQUAL; }
+"!="          { add_buffer(yytext); coluna += yyleng; return NOT_EQUAL; }
+"<="          { add_buffer(yytext); coluna += yyleng; return LESS_EQUAL; }
+">="          { add_buffer(yytext); coluna += yyleng; return GREATER_EQUAL; }
+">>"          { add_buffer(yytext); coluna += yyleng; return R_SHIFT; }
+"<<"          { add_buffer(yytext); coluna += yyleng; return L_SHIFT; }
+"+="          { add_buffer(yytext); coluna += yyleng; return ADD_ASSIGN; }
+"-="          { add_buffer(yytext); coluna += yyleng; return MINUS_ASSIGN; }
+
+"+"           { add_buffer(yytext); coluna += yyleng; return PLUS; }
+"-"           { add_buffer(yytext); coluna += yyleng; return MINUS; }
+"*"           { add_buffer(yytext); coluna += yyleng; return MULTIPLY; }
+"/"           { add_buffer(yytext); coluna += yyleng; return DIV; }
+"%"           { add_buffer(yytext); coluna += yyleng; return REMAINDER; }
+"&"           { add_buffer(yytext); coluna += yyleng; return BITWISE_AND; }
+"|"           { add_buffer(yytext); coluna += yyleng; return BITWISE_OR; }
+"~"           { add_buffer(yytext); coluna += yyleng; return BITWISE_NOT; }
+"^"           { add_buffer(yytext); coluna += yyleng; return BITWISE_XOR; }
+"!"           { add_buffer(yytext); coluna += yyleng; return NOT; }
+"<"           { add_buffer(yytext); coluna += yyleng; return LESS_THAN; }
+">"           { add_buffer(yytext); coluna += yyleng; return GREATER_THAN; }
+"="           { add_buffer(yytext); coluna += yyleng; return ASSIGN; }
+
+";"           { add_buffer(yytext); coluna += yyleng; return SEMICOLON; }
+","           { add_buffer(yytext); coluna += yyleng; return COMMA; }
+":"           { add_buffer(yytext); coluna += yyleng; return COLON; }
+
+"("           { add_buffer(yytext); coluna += yyleng; return L_PAREN; }
+")"           { add_buffer(yytext); coluna += yyleng; return R_PAREN; }
+"{"           { add_buffer(yytext); coluna += yyleng; return L_CURLY_BRACKET; }
+"}"           { add_buffer(yytext); coluna += yyleng; return R_CURLY_BRACKET; }
+"["           { add_buffer(yytext); coluna += yyleng; return L_SQUARE_BRACKET; }
+"]"           { add_buffer(yytext); coluna += yyleng; return R_SQUARE_BRACKET; }
+
+"?"           { add_buffer(yytext); coluna += yyleng; return TERNARY_CONDITIONAL; }
+"#"           { add_buffer(yytext); coluna += yyleng; return NUMBER_SIGN; }
+"->"          { add_buffer(yytext); coluna += yyleng; return POINTER; }
+
+printf        { add_buffer(yytext); coluna += yyleng; return PRINTF; }
+scanf         { add_buffer(yytext); coluna += yyleng; return SCANF; }
+define        { add_buffer(yytext); coluna += yyleng; return DEFINE; }
+exit          { add_buffer(yytext); coluna += yyleng; return EXIT; }
 
 
 [a-zA-Z_][a-zA-Z0-9_]* {
-                            int start_col = coluna;
-                            coluna += yyleng;
 
-                            if (yyleng > 255) {
-                                print_token("error:lexical:%d:%d: identifier too long",
-                                    yylineno, coluna - yyleng);
-                            } else {
-                                return IDENTIFIER;
-                            }
+    add_buffer(yytext);
+
+    int start_col = coluna;
+    coluna += yyleng;
+
+    if (yyleng > 255) {
+        print_token("error:lexical:%d:%d: identifier too long",
+            yylineno, coluna - yyleng);
+    } else {
+        return IDENTIFIER;
+    }
 }
 
 
-\n          { coluna = 1;}
-\r          { coluna = 1;}
-[ \t]+         { coluna += yyleng; }
+\n {
+    linha_buffer[pos_buffer] = '\0';
+
+    coluna = 1;
+
+    pos_buffer = 0;
+    linha_buffer[0] = '\0';
+}
+
+\r {
+    linha_buffer[pos_buffer] = '\0';
+
+    coluna = 1;
+
+    pos_buffer = 0;
+    linha_buffer[0] = '\0';
+}
+
+[ \t]+ {
+    add_buffer(yytext);
+    coluna += yyleng;
+}
 
 
-"//"[^\n]* { coluna += yyleng; }            
+"//"[^\n]* {
+    add_buffer(yytext);
+    coluna += yyleng;
+}
 
-"/*"                {
-                        comment_line = yylineno;
-                        comment_col = coluna;
-                        coluna += yyleng;
-                        BEGIN(COMMENT);
-                    }
+
+"/*" {
+    add_buffer(yytext);
+
+    comment_line = yylineno;
+    comment_col = coluna;
+
+    coluna += yyleng;
+
+    BEGIN(COMMENT);
+}
 
 <COMMENT>"/*"/[^/] {
+
+    add_buffer(yytext);
+
     int start_col = coluna;
+
     coluna += yyleng;
-    print_token("warning:%d:%d: '/*' within block comment",
-                yylineno, start_col);
+
+    print_token(
+        "warning:%d:%d: '/*' within block comment",
+        yylineno,
+        start_col
+    );
 }
 
 <COMMENT>"*/" {
+
+    add_buffer(yytext);
+
     coluna += yyleng;
+
     BEGIN(INITIAL);
 }
 
-<COMMENT>\n { coluna = 1; }
+<COMMENT>\n {
 
-<COMMENT>. { coluna += yyleng; }
+    linha_buffer[pos_buffer] = '\0';
+
+    coluna = 1;
+
+    pos_buffer = 0;
+    linha_buffer[0] = '\0';
+}
+
+<COMMENT>. {
+
+    add_buffer(yytext);
+
+    coluna += yyleng;
+}
 
 <COMMENT><<EOF>> {
-    print_token("error:lexical:%d:%d: unterminated comment",
-                comment_line, comment_col);
+
+    print_token(
+        "error:lexical:%d:%d: unterminated comment",
+        comment_line,
+        comment_col
+    );
+
     return 0;
 }
 
 . {
-    print_token("error:lexical:%d:%d: %s", yylineno, coluna, yytext);
+
+    add_buffer(yytext);
+
+    print_token(
+        "error:lexical:%d:%d: %s",
+        yylineno,
+        coluna,
+        yytext
+    );
+
+    printf("\n%s\n", linha_buffer);
+
+    for(int i = 1; i < coluna; i++)
+        printf(" ");
+
+    printf("^\n");
+
     coluna += yyleng;
 }
-
 
 %%
