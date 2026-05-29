@@ -12,6 +12,12 @@
 
 #include "sintatico.tab.h"
 
+extern YYLTYPE yylloc;
+
+#define YY_USER_ACTION \
+    yylloc.first_line = yylineno; \
+    yylloc.first_column = coluna;
+
 int coluna = 1;
 int comment_line;
 int comment_col;
@@ -20,6 +26,8 @@ int first = 1;
 
 char linha_buffer[1024];
 int pos_buffer = 0;
+
+void finalizar_linha();
 
 void add_buffer(const char *txt) {
 
@@ -45,6 +53,7 @@ void print_token(const char* fmt, ...) {
     first = 0;
     va_end(args);
 }
+
 
 %}
 
@@ -259,3 +268,16 @@ exit          { add_buffer(yytext); coluna += yyleng; return EXIT; }
 }
 
 %%
+
+void finalizar_linha() {
+    int c;
+    
+    /* input() é nativo do Flex. Ele consome com segurança o fluxo pendente. */
+    while ((c = input()) != 0 && c != EOF && c != '\n' && c != '\r') {
+        if (pos_buffer < 1023) {
+            linha_buffer[pos_buffer++] = (char)c;
+        }
+    }
+    
+    linha_buffer[pos_buffer] = '\0';
+}

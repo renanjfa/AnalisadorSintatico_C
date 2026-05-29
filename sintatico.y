@@ -7,7 +7,7 @@
 extern int yylex();
 extern char* yytext;
 extern void print_token();
-
+extern void finalizar_linha();
 extern char linha_buffer[];
 
 void yyerror(const char *s);
@@ -170,7 +170,7 @@ Bloco: L_CURLY_BRACKET Comandos R_CURLY_BRACKET
 ;
 
 Comandos: ListaComandos Comandos
-        |
+        | ListaComandos
 ;
 
 ListaComandos: DO Bloco WHILE L_PAREN Expressao R_PAREN SEMICOLON
@@ -332,17 +332,20 @@ Numero: NUM_INTEGER
 
 void report_error(const char* s)
 {
+    finalizar_linha();
+
     print_token("error:syntax:%d:%d: %s", 
         yylloc.first_line,
         yylloc.first_column,
         yytext);
 
-    print_token("%s", linha_buffer);
+    printf("\n%s\n", linha_buffer);
 
-    for(int i = 1; i < yylloc.first_column; i++)
-        print_token(" ");
+    for(int i = 1; i < yylloc.first_column; i++) {
+        printf(" ");
+    }
 
-    print_token("^");
+    printf("^");
 }
 
 void yyerror(const char *s)
