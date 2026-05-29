@@ -6,15 +6,15 @@ Programa ->
 
 ## ----------- DECLARACOES ----------- ##
 
-Declaracoes -> # define identificador Expressao
+Declaracoes -> NUMBER_SIGN DEFINE IDENTIFIER Expressao
 Declaracoes -> DeclaracaoVariaveis
 Declaracoes -> DeclaracaoPrototipo
 
 ## ----------- FUNCAO ----------- ##
 
-Funcao -> Tipo Ponteiro identificador Parametros { ListaDeclaracoes Comandos }
+Funcao -> Tipo Ponteiro IDENTIFIER Parametros L_CURLY_BRACKET ListaDeclaracoes Comandos R_CURLY_BRACKET
 
-Ponteiro -> * Ponteiro
+Ponteiro -> MULTIPLY Ponteiro
 Ponteiro -> 
 
 ListaDeclaracoes -> DeclaracaoVariaveis ListaDeclaracoes
@@ -23,45 +23,45 @@ ListaDeclaracoes ->
 
 ## ----------- DECLARACAO VARIAVEIS ----------- ##
 
-DeclaracaoVariaveis -> Tipo LoopDeclaracaoVariaveis ;
+DeclaracaoVariaveis -> Tipo LoopDeclaracaoVariaveis SEMICOLON
 
-LoopDeclaracaoVariaveis -> Ponteiro identificador LoopExpressaoColchetes IgualExpressaoAtribuicao LoopVirgulaDeclaracaoVariaveis
+LoopDeclaracaoVariaveis -> Ponteiro IDENTIFIER LoopExpressaoColchetes IgualExpressaoAtribuicao LoopVirgulaDeclaracaoVariaveis
 
-IgualExpressaoAtribuicao -> = ExpressaoAtribuicao
+IgualExpressaoAtribuicao -> ASSIGN ExpressaoAtribuicao
 IgualExpressaoAtribuicao -> 
 
-LoopVirgulaDeclaracaoVariaveis -> , LoopDeclaracaoVariaveis
+LoopVirgulaDeclaracaoVariaveis -> COMMA LoopDeclaracaoVariaveis
 
 
 
 
 ## ----------- DECLARACAO PROTOTIPO ----------- ##
 
-DeclaracaoPrototipo -> Tipo Ponteiro identificador Parametros ;
+DeclaracaoPrototipo -> Tipo Ponteiro IDENTIFIER Parametros SEMICOLON
 
 
 ## ----------- PARAMETROS ----------- ##     
 
-Parametros -> ( LoopParametro )
+Parametros -> L_PAREN LoopParametro R_PAREN
 
-LoopParametro -> Tipo Ponteiro identificador LoopExpressaoColchetes LoopVirgula
+LoopParametro -> Tipo Ponteiro IDENTIFIER LoopExpressaoColchetes LoopVirgula
 
-LoopVirgula -> , LoopParametro
+LoopVirgula -> COMMA LoopParametro
 LoopVirgula -> 
 
-LoopExpressaoColchetes -> [ Expressao ] LoopExpressaoColchetes
+LoopExpressaoColchetes -> L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET LoopExpressaoColchetes
 LoopExpressaoColchetes -> 
 
 
 ## ----------- TIPO ----------- ##    
 
-Tipo -> int
-Tipo -> char 
-Tipo -> void
+Tipo -> INT
+Tipo -> CHAR 
+Tipo -> VOID
 
 ## ----------- BLOCO ----------- ##    
 
-Bloco -> { Comandos }
+Bloco -> L_CURLY_BRACKET Comandos R_CURLY_BRACKET
 
 ## ----------- COMANDOS ----------- ##    
 
@@ -70,23 +70,23 @@ Comandos ->
 
 ## ----------- LISTA COMANDOS ----------- ##    
 
-ListaComandos -> do Bloco while ( Expressao ) ;
-ListaComandos -> if ( Expressao ) Bloco ElseBloco
-ListaComandos -> while ( Expressao ) Bloco 
-ListaComandos -> for ( Expressao ; Expressao ; Expressao ) Bloco
-ListaComandos -> printf ( string VirgulaExpressao ) ;
-ListaComandos -> scanf ( string , & identificador ) ;
-ListaComandos -> exit ( Expressao ) ;
-ListaComandos -> return Expressao ;
-ListaComandos -> Expressao ;
-ListaComandos -> ;
+ListaComandos -> DO Bloco WHILE L_PAREN Expressao R_PAREN SEMICOLON
+ListaComandos -> IF L_PAREN Expressao R_PAREN Bloco ElseBloco
+ListaComandos -> WHILE L_PAREN Expressao R_PAREN Bloco 
+ListaComandos -> FOR L_PAREN Expressao SEMICOLON Expressao SEMICOLON Expressao R_PAREN Bloco
+ListaComandos -> PRINTF L_PAREN string VirgulaExpressao R_PAREN SEMICOLON
+ListaComandos -> SCANF L_PAREN string COMMA BITWISE_AND IDENTIFIER R_PAREN SEMICOLON
+ListaComandos -> EXIT L_PAREN Expressao R_PAREN SEMICOLON
+ListaComandos -> RETURN Expressao SEMICOLON
+ListaComandos -> Expressao SEMICOLON
+ListaComandos -> SEMICOLON
 ListaComandos -> Bloco
 
 
-ElseBloco -> else Bloco
+ElseBloco -> ELSE Bloco
 ElseBloco ->
 
-VirgulaExpressao -> , Expressao
+VirgulaExpressao -> COMMA Expressao
 VirgulaExpressao -> 
 
 Expressao -> 
@@ -95,7 +95,7 @@ Expressao ->
 ## ----------- EXPRESSAO ----------- ##    
 
 Expressao -> ExpressaoAtribuicao
-Expressao -> Expressao , ExpressaoAtribuicao
+Expressao -> Expressao COMMA ExpressaoAtribuicao
 
 
 
@@ -104,75 +104,75 @@ Expressao -> Expressao , ExpressaoAtribuicao
 ExpressaoAtribuicao -> ExpressaoCondicional
 ExpressaoAtribuicao -> ExpressaoUnaria OperadoresIgual ExpressaoAtribuicao
 
-OperadoresIgual -> =
-OperadoresIgual -> +=
-OperadoresIgual -> -=
+OperadoresIgual -> ASSIGN
+OperadoresIgual -> ADD_ASSIGN
+OperadoresIgual -> MINUS_ASSIGN
 
 
 
 ## ----------- EXPRESSAO CONDICIONAL ----------- ##    
 
 ExpressaoCondicional -> ExpressaoORLogico
-ExpressaoCondicional -> ExpressaoORLogico ? Expressao : ExpressaoCondicional
+ExpressaoCondicional -> ExpressaoORLogico TERNARY_CONDITIONAL Expressao COLON ExpressaoCondicional
 
 
 
 ## ----------- EXPRESSAO OR LOGICO ----------- ##     
 
 ExpressaoORLogico -> ExpressaoANDLogico
-ExpressaoORLogico -> ExpressaoORLogico || ExpressaoANDLogico
+ExpressaoORLogico -> ExpressaoORLogico LOGICAL_OR ExpressaoANDLogico
 
 
 
 ## ----------- EXPRESSAO AND LOGICO ----------- ##    
 
 ExpressaoANDLogico -> ExpressaoOR 
-ExpressaoANDLogico -> ExpressaoANDLogico && ExpressaoOR
+ExpressaoANDLogico -> ExpressaoANDLogico LOGICAL_AND ExpressaoOR
 
 
 
 ## ----------- EXPRESSAO OR ----------- ##    
 
 ExpressaoOR -> ExpressaoXOR
-ExpressaoOR -> ExpressaoOR | ExpressaoXOR
+ExpressaoOR -> ExpressaoOR BITWISE_OR ExpressaoXOR
 
 
 
 ## ----------- EXPRESSAO XOR ----------- ##    
 
 ExpressaoXOR -> ExpressaoAND 
-ExpressaoXOR -> ExpressaoXOR ^ ExpressaoAND
+ExpressaoXOR -> ExpressaoXOR BITWISE_XOR ExpressaoAND
 
 ## ----------- EXPRESSAO AND ----------- ##
 
 ExpressaoAND -> ExpressaoIgualdade
-ExpressaoAND -> ExpressaoAND & ExpressaoIgualdade
+ExpressaoAND -> ExpressaoAND BITWISE_AND ExpressaoIgualdade
 
 ## ----------- EXPRESSAO DE IGUALDADE ##
 
 ExpressaoIgualdade -> ExpressaoRelacional
 ExpressaoIgualdade -> ExpressaoIgualdade IgualOuDiferente ExpressaoRelacional
 
-IgualOuDiferente -> !=
-IgualOuDiferente -> ==
+IgualOuDiferente -> NOT_EQUAL
+IgualOuDiferente -> EQUAL
 
 ## EXPRESSAO RELACIONAL ##    
 
 ExpressaoRelacional -> ExpressaoShift
 ExpressaoRelacional -> ExpressaoRelacional MaiorMenor ExpressaoShift
 
-MaiorMenor -> <
-MaiorMenor -> <=
-MaiorMenor -> >
-MaiorMenor -> >=
+MaiorMenor -> LESS_THAN
+MaiorMenor -> LESS_EQUAL
+MaiorMenor -> GREATER_THAN
+MaiorMenor -> GREATER_EQUAL
 
 ## EXPRESSAO SHIFT ##    
 
 ExpressaoShift -> ExpressaoAditiva
 ExpressaoShift -> ExpressaoShift ShiftEsqDir ExpressaoAditiva
 
-ShiftEsqDir -> <<
-ShiftEsqDir -> >>
+ShiftEsqDir -> L_SHIFT
+ShiftEsqDir -> R_SHIFT
 
 
 ## EXPRESSAO ADITIVA ##    
@@ -180,36 +180,36 @@ ShiftEsqDir -> >>
 ExpressaoAditiva -> ExpressaoMultiplicativa
 ExpressaoAditiva -> ExpressaoAditiva MaisOuMenos ExpressaoMultiplicativa
 
-MaisOuMenos -> +
-MaisOuMenos -> -
+MaisOuMenos -> PLUS
+MaisOuMenos -> MINUS
 
 ## EXPRESSAO MULTIPLICATIVA ##     
 
 ExpressaoMultiplicativa -> ExpressaoCast
 ExpressaoMultiplicativa -> ExpressaoMultiplicativa DivMultResto ExpressaoCast
 
-DivMultResto -> *
-DivMultResto -> /
-DivMultResto -> %
+DivMultResto -> MULTIPLY
+DivMultResto -> DIV
+DivMultResto -> REMAINDER
 
 ## EXPRESSOA CAST ##    
 
 ExpressaoCast -> ExpressaoUnaria
-ExpressaoCast -> ( Tipo Ponteiro ) ExpressaoCast
+ExpressaoCast -> L_PAREN Tipo Ponteiro R_PAREN ExpressaoCast
 
 ## EXPRESSAO UNARIA ##    
 
 ExpressaoUnaria -> ExpressaoPosFixa
-ExpressaoUnaria -> ++ ExpressaoUnaria
-ExpressaoUnaria -> -- ExpressaoUnaria
+ExpressaoUnaria -> INC ExpressaoUnaria
+ExpressaoUnaria -> DEC ExpressaoUnaria
 ExpressaoUnaria -> OperadoresUnarios ExpressaoCast
 
-OperadoresUnarios -> &
-OperadoresUnarios -> *
-OperadoresUnarios -> +
-OperadoresUnarios -> -
-OperadoresUnarios -> ~
-OperadoresUnarios -> !
+OperadoresUnarios -> BITWISE_AND
+OperadoresUnarios -> MULTIPLY
+OperadoresUnarios -> PLUS
+OperadoresUnarios -> MINUS
+OperadoresUnarios -> BITWISE_NOT
+OperadoresUnarios -> NOT
 
 
 ## EXPRESSAO POS FIXA ##     
@@ -217,27 +217,27 @@ OperadoresUnarios -> !
 ExpressaoPosFixa -> ExpressaoPrimaria
 ExpressaoPosFixa -> ExpressaoPosFixa DecisaoExpressaoPosFixa
 
-DecisaoExpressaoPosFixa -> [ Expressao ]
-DecisaoExpressaoPosFixa -> ++
-DecisaoExpressaoPosFixa -> -- 
-DecisaoExpressaoPosFixa -> ( VirgulaExpressaoAtribuicao )
+DecisaoExpressaoPosFixa -> L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET
+DecisaoExpressaoPosFixa -> INC
+DecisaoExpressaoPosFixa -> DEC 
+DecisaoExpressaoPosFixa -> L_PAREN VirgulaExpressaoAtribuicao R_PAREN
 
-VirgulaExpressaoAtribuicao -> ExpressaoAtribuicao , VirgulaExpressaoAtribuicao
+VirgulaExpressaoAtribuicao -> ExpressaoAtribuicao COMMA VirgulaExpressaoAtribuicao
 VirgulaExpressaoAtribuicao ->
 
 
 
 ## EXPRESSAO PRIMARIA ##    
 
-ExpressaoPrimaria -> identificador
+ExpressaoPrimaria -> IDENTIFIER
 ExpressaoPrimaria -> Numero
 ExpressaoPrimaria -> caracter
 ExpressaoPrimaria -> string
-ExpressaoPrimaria -> ( Expressao )
+ExpressaoPrimaria -> L_PAREN Expressao R_PAREN
 
 ## NUMERO ##   
 
-Numero -> NUM_integer
+Numero -> NUM_INTEGER
 Numero -> NUM_HEXA
 Numero -> NUM_OCTAL
 
