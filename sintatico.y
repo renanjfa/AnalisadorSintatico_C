@@ -10,6 +10,7 @@ extern char* yytext;
 extern char linha_buffer[];
 
 void yyerror(const char *s);
+
 %}
 
 %token VOID 
@@ -68,6 +69,29 @@ void yyerror(const char *s);
 %token NUM_INTEGER
 %token CHARACTER
 %token STRING
+%token BREAK
+%token SWITCH
+%token CASE
+%token DEFAULT
+%token TYPEDEF
+%token STRUCT
+
+%nonassoc LOWER_THAN_ELSE
+%nonassoc ELSE
+
+%right ASSIGN ADD_ASSIGN MINUS_ASSIGN
+%right TERNARY_CONDITIONAL
+%left LOGICAL_OR
+%left LOGICAL_AND
+%left BITWISE_OR
+%left BITWISE_XOR
+%left BITWISE_AND
+%left EQUAL NOT_EQUAL
+%left LESS_THAN LESS_EQUAL GREATER_THAN GREATER_EQUAL
+%left L_SHIFT R_SHIFT
+%left PLUS MINUS
+%left MULTIPLY DIV REMAINDER
+%right INC DEC NOT BITWISE_NOT UNARY_MINUS UNARY_PLUS POINTER_REF
 
 %start Programa
 
@@ -80,14 +104,14 @@ Programa: Declaracoes Programa
 ;
 
 Declaracoes: NUMBER_SIGN DEFINE IDENTIFIER Expressao
-            | NUMBER_SIGN DEFINE IDENTIFIER error { report_error("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
+            | NUMBER_SIGN DEFINE IDENTIFIER error { yyerror("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
             | DeclaracaoVariaveis
             | DeclaracaoPrototipo
 ;
 
 Funcao: Tipo Ponteiro IDENTIFIER Parametros L_CURLY_BRACKET ListaDeclaracoes Comandos R_CURLY_BRACKET
-      | Tipo Ponteiro IDENTIFIER Parametros error { report_error("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
-      | Tipo Ponteiro IDENTIFIER Parametros L_CURLY_BRACKET error R_CURLY_BRACKET { report_error("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
+      | Tipo Ponteiro IDENTIFIER Parametros error { yyerror("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
+      | Tipo Ponteiro IDENTIFIER Parametros L_CURLY_BRACKET error R_CURLY_BRACKET { yyerror("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
 ;
 
 Ponteiro: MULTIPLY Ponteiro
@@ -99,7 +123,7 @@ ListaDeclaracoes: DeclaracaoVariaveis ListaDeclaracoes
 ;
 
 DeclaracaoVariaveis: Tipo LoopDeclaracaoVariaveis SEMICOLON
-                   | Tipo error SEMICOLON { report_error("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
+                   | Tipo error SEMICOLON { yyerror("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
 ;
 
 LoopDeclaracaoVariaveis: Ponteiro IDENTIFIER LoopExpressaoColchetes IgualExpressaoAtribuicao LoopVirgulaDeclaracaoVariaveis
@@ -110,18 +134,19 @@ IgualExpressaoAtribuicao: ASSIGN ExpressaoAtribuicao
 ;
 
 LoopVirgulaDeclaracaoVariaveis: COMMA LoopDeclaracaoVariaveis
+                                |
 ;
 
 DeclaracaoPrototipo: Tipo Ponteiro IDENTIFIER Parametros SEMICOLON
-                   | Tipo Ponteiro IDENTIFIER error SEMICOLON { report_error("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
+                   | Tipo Ponteiro IDENTIFIER error SEMICOLON { yyerror("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
 ;
 
 Parametros: L_PAREN LoopParametro R_PAREN
-          | L_PAREN error R_PAREN { report_error("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
+          | L_PAREN error R_PAREN { yyerror("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
 ;
 
 LoopParametro: Tipo Ponteiro IDENTIFIER LoopExpressaoColchetes LoopVirgula
-             | Tipo error { report_error("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
+             | Tipo error { yyerror("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
 ;
 
 LoopVirgula: COMMA LoopParametro
@@ -129,7 +154,7 @@ LoopVirgula: COMMA LoopParametro
 ;
 
 LoopExpressaoColchetes: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET LoopExpressaoColchetes
-                        | L_SQUARE_BRACKET error R_SQUARE_BRACKET { report_error("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
+                        | L_SQUARE_BRACKET error R_SQUARE_BRACKET { yyerror("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
                         |
 ;
 
@@ -139,7 +164,7 @@ Tipo: INT
 ;
 
 Bloco: L_CURLY_BRACKET Comandos R_CURLY_BRACKET
-     | L_CURLY_BRACKET error R_CURLY_BRACKET { report_error("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
+     | L_CURLY_BRACKET error R_CURLY_BRACKET { yyerror("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
 ;
 
 Comandos: ListaComandos Comandos
@@ -147,26 +172,24 @@ Comandos: ListaComandos Comandos
 ;
 
 ListaComandos: DO Bloco WHILE L_PAREN Expressao R_PAREN SEMICOLON
-            |  IF L_PAREN Expressao R_PAREN Bloco ElseBloco
-            |  IF L_PAREN error R_PAREN Bloco { report_error("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
+            |  IF L_PAREN Expressao R_PAREN Bloco %prec LOWER_THAN_ELSE
+            |  IF L_PAREN Expressao R_PAREN Bloco ELSE Bloco
+            |  IF L_PAREN error R_PAREN Bloco { yyerror("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
             |  WHILE L_PAREN Expressao R_PAREN Bloco
-            |  WHILE L_PAREN error R_PAREN Bloco { report_error("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
-            |  FOR L_PAREN Expressao SEMICOLON Expressao SEMICOLON Expressao R_PAREN Bloco
-            |  FOR L_PAREN error R_PAREN Bloco { report_error("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
+            |  WHILE L_PAREN error R_PAREN Bloco { yyerror("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
+            |  FOR L_PAREN ExpressaoOpcional SEMICOLON ExpressaoOpcional SEMICOLON ExpressaoOpcional R_PAREN Bloco
+            |  FOR L_PAREN error R_PAREN Bloco { yyerror("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
             |  PRINTF L_PAREN STRING VirgulaExpressao R_PAREN SEMICOLON
             |  SCANF L_PAREN STRING COMMA BITWISE_AND IDENTIFIER R_PAREN SEMICOLON
             |  EXIT L_PAREN Expressao R_PAREN SEMICOLON
-            |  RETURN Expressao SEMICOLON
-            |  RETURN error SEMICOLON { report_error("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
+            |  RETURN ExpressaoOpcional SEMICOLON
+            |  RETURN error SEMICOLON { yyerror("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
             |  Expressao SEMICOLON
             |  SEMICOLON
             |  Bloco
-            |  error SEMICOLON { report_error("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
+            |  error SEMICOLON { yyerror("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
 ;
 
-ElseBloco: ELSE Bloco
-         | 
-;
 
 VirgulaExpressao: COMMA Expressao
                 | 
@@ -174,7 +197,10 @@ VirgulaExpressao: COMMA Expressao
 
 Expressao: ExpressaoAtribuicao
          | Expressao COMMA ExpressaoAtribuicao
-         | 
+;
+
+ExpressaoOpcional: Expressao
+                |  
 ;
 
 ExpressaoAtribuicao: ExpressaoCondicional
@@ -255,7 +281,7 @@ DivMultResto: MULTIPLY
 
 ExpressaoCast: ExpressaoUnaria
              | L_PAREN Tipo Ponteiro R_PAREN ExpressaoCast
-             | L_PAREN error R_PAREN ExpressaoCast { report_error("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
+             | L_PAREN error R_PAREN ExpressaoCast { yyerror("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
 ;
 
 ExpressaoUnaria: ExpressaoPosFixa
@@ -265,11 +291,11 @@ ExpressaoUnaria: ExpressaoPosFixa
 ;
 
 OperadoresUnarios: BITWISE_AND
-                  | MULTIPLY
-                  | PLUS
-                  | MINUS
-                  | BITWISE_NOT
-                  | NOT
+                 | MULTIPLY %prec POINTER_REF
+                 | PLUS %prec UNARY_PLUS
+                 | MINUS %prec UNARY_MINUS
+                 | BITWISE_NOT
+                 | NOT
 ;
 
 ExpressaoPosFixa: ExpressaoPrimaria
@@ -280,7 +306,7 @@ DecisaoExpressaoPosFixa: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET
                         | INC
                         | DEC 
                         | L_PAREN VirgulaExpressaoAtribuicao R_PAREN
-                        | L_PAREN error R_PAREN { report_error("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
+                        | L_PAREN error R_PAREN { yyerror("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
 ;
 
 VirgulaExpressaoAtribuicao: ExpressaoAtribuicao COMMA VirgulaExpressaoAtribuicao
@@ -292,7 +318,7 @@ ExpressaoPrimaria: IDENTIFIER
                 |  CHARACTER
                 |  STRING
                 |  L_PAREN Expressao R_PAREN
-                |  L_PAREN error R_PAREN { report_error("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
+                |  L_PAREN error R_PAREN { yyerror("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
 ;
 
 Numero: NUM_INTEGER
@@ -327,6 +353,10 @@ void yyerror(const char *s)
 
 int main(int argc, char** argv)
 {
-    while (yyparse());
+    if (yyparse() == 0) {
+        printf("SUCESSFUL COMPILATION!!\n");
+    } else {
+        printf("COMPILATION FAILED WITH ERRORS.\n");
+    }
     return 0;
 }
