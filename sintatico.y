@@ -6,10 +6,12 @@
 
 extern int yylex();
 extern char* yytext;
+extern void print_token();
 
 extern char linha_buffer[];
 
 void yyerror(const char *s);
+
 
 %}
 
@@ -141,6 +143,7 @@ DeclaracaoPrototipo: Tipo Ponteiro IDENTIFIER Parametros SEMICOLON
 ;
 
 Parametros: L_PAREN LoopParametro R_PAREN
+          | L_PAREN R_PAREN
           | L_PAREN error R_PAREN { yyerror("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok; yyclearin;}
 ;
 
@@ -304,6 +307,7 @@ DecisaoExpressaoPosFixa: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET
                         | INC
                         | DEC 
                         | L_PAREN VirgulaExpressaoAtribuicao R_PAREN
+                        | L_PAREN R_PAREN
                         | L_PAREN error R_PAREN { yyerror("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok; yyclearin;}
 ;
 
@@ -328,33 +332,29 @@ Numero: NUM_INTEGER
 
 void report_error(const char* s)
 {
-    printf(
-        "error:syntax:%d:%d: %s near '%s'\n",
+    print_token("error:syntax:%d:%d: %s", 
         yylloc.first_line,
         yylloc.first_column,
-        s,
-        yytext
-    );
+        yytext);
 
-    printf("%s\n", linha_buffer);
+    print_token("%s", linha_buffer);
 
     for(int i = 1; i < yylloc.first_column; i++)
-        printf(" ");
+        print_token(" ");
 
-    printf("^\n");
+    print_token("^");
 }
 
 void yyerror(const char *s)
 {
     report_error(s);
+    exit(1);
 }
 
 int main(int argc, char** argv)
 {
     if (yyparse() == 0) {
-        printf("\nSUCESSFUL COMPILATION.");
-    } else {
-        printf("\nCOMPILATION FAILED WITH ERRORS.");
+        print_token("SUCCESSFUL COMPILATION.");
     }
     return 0;
 }

@@ -174,19 +174,19 @@ exit          { add_buffer(yytext); coluna += yyleng; return EXIT; }
 
     comment_line = yylineno;
     comment_col = coluna;
-
     coluna += yyleng;
 
+    comment_level = 1;
     BEGIN(COMMENT);
 }
 
 <COMMENT>"/*"/[^/] {
 
     add_buffer(yytext);
-
     int start_col = coluna;
-
     coluna += yyleng;
+
+    comment_level++;
 
     print_token(
         "warning:%d:%d: '/*' within block comment",
@@ -198,18 +198,24 @@ exit          { add_buffer(yytext); coluna += yyleng; return EXIT; }
 <COMMENT>"*/" {
 
     add_buffer(yytext);
-
     coluna += yyleng;
 
-    BEGIN(INITIAL);
+    comment_level--;
+
+        BEGIN(INITIAL); 
+}
+
+<COMMENT>\r {
+    linha_buffer[pos_buffer] = '\0';
+    coluna = 1;
+    pos_buffer = 0;
+    linha_buffer[0] = '\0';
 }
 
 <COMMENT>\n {
 
     linha_buffer[pos_buffer] = '\0';
-
     coluna = 1;
-
     pos_buffer = 0;
     linha_buffer[0] = '\0';
 }
@@ -217,7 +223,6 @@ exit          { add_buffer(yytext); coluna += yyleng; return EXIT; }
 <COMMENT>. {
 
     add_buffer(yytext);
-
     coluna += yyleng;
 }
 
