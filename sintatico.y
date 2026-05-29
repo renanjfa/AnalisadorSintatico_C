@@ -309,8 +309,8 @@ DecisaoExpressaoPosFixa: L_SQUARE_BRACKET Expressao R_SQUARE_BRACKET
                         | L_PAREN error R_PAREN { yyerror("FLAMENGO PENTA CAMPEAO LIBERTADORES"); yyerrok;}
 ;
 
-VirgulaExpressaoAtribuicao: ExpressaoAtribuicao COMMA VirgulaExpressaoAtribuicao
-                            | 
+VirgulaExpressaoAtribuicao: ExpressaoAtribuicao
+                          | VirgulaExpressaoAtribuicao COMMA ExpressaoAtribuicao
 ; 
 
 ExpressaoPrimaria: IDENTIFIER
