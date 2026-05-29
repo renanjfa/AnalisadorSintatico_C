@@ -74,8 +74,8 @@ ListaComandos -> DO Bloco WHILE L_PAREN Expressao R_PAREN SEMICOLON
 ListaComandos -> IF L_PAREN Expressao R_PAREN Bloco ElseBloco
 ListaComandos -> WHILE L_PAREN Expressao R_PAREN Bloco 
 ListaComandos -> FOR L_PAREN Expressao SEMICOLON Expressao SEMICOLON Expressao R_PAREN Bloco
-ListaComandos -> PRINTF L_PAREN string VirgulaExpressao R_PAREN SEMICOLON
-ListaComandos -> SCANF L_PAREN string COMMA BITWISE_AND IDENTIFIER R_PAREN SEMICOLON
+ListaComandos -> PRINTF L_PAREN STRING VirgulaExpressao R_PAREN SEMICOLON
+ListaComandos -> SCANF L_PAREN STRING COMMA BITWISE_AND IDENTIFIER R_PAREN SEMICOLON
 ListaComandos -> EXIT L_PAREN Expressao R_PAREN SEMICOLON
 ListaComandos -> RETURN Expressao SEMICOLON
 ListaComandos -> Expressao SEMICOLON
@@ -231,8 +231,8 @@ VirgulaExpressaoAtribuicao ->
 
 ExpressaoPrimaria -> IDENTIFIER
 ExpressaoPrimaria -> Numero
-ExpressaoPrimaria -> caracter
-ExpressaoPrimaria -> string
+ExpressaoPrimaria -> CHARACTER
+ExpressaoPrimaria -> STRING
 ExpressaoPrimaria -> L_PAREN Expressao R_PAREN
 
 ## NUMERO ##   
