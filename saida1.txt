@@ -1,0 +1,9 @@
+warning:3:5: '/*' within block comment
+warning:4:5: '/*' within block commenterror:syntax:1:1: syntax error near ')'
+main ()
+^
+error:syntax:1:1: FLAMENGO PENTA CAMPEAO LIBERTADORES near ')'
+main ()
+^
+
+SUCESSFUL COMPILATION.
