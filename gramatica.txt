@@ -1,0 +1,243 @@
+## ----------- PROGRAMA ---------- ##
+
+Programa -> Declaracoes Programa
+Programa -> Funcao Programa
+Programa -> 
+
+## ----------- DECLARACOES ----------- ##
+
+Declaracoes -> # define identificador Expressao
+Declaracoes -> DeclaracaoVariaveis
+Declaracoes -> DeclaracaoPrototipo
+
+## ----------- FUNCAO ----------- ##
+
+Funcao -> Tipo Ponteiro identificador Parametros { ListaDeclaracoes Comandos }
+
+Ponteiro -> * Ponteiro
+Ponteiro -> 
+
+ListaDeclaracoes -> DeclaracaoVariaveis ListaDeclaracoes
+ListaDeclaracoes ->
+
+
+## ----------- DECLARACAO VARIAVEIS ----------- ##
+
+DeclaracaoVariaveis -> Tipo LoopDeclaracaoVariaveis ;
+
+LoopDeclaracaoVariaveis -> Ponteiro identificador LoopExpressaoColchetes IgualExpressaoAtribuicao LoopVirgulaDeclaracaoVariaveis
+
+IgualExpressaoAtribuicao -> = ExpressaoAtribuicao
+IgualExpressaoAtribuicao -> 
+
+LoopVirgulaDeclaracaoVariaveis -> , LoopDeclaracaoVariaveis
+
+
+
+
+## ----------- DECLARACAO PROTOTIPO ----------- ##
+
+DeclaracaoPrototipo -> Tipo Ponteiro identificador Parametros ;
+
+
+## ----------- PARAMETROS ----------- ##     
+
+Parametros -> ( LoopParametro )
+
+LoopParametro -> Tipo Ponteiro identificador LoopExpressaoColchetes LoopVirgula
+
+LoopVirgula -> , LoopParametro
+LoopVirgula -> 
+
+LoopExpressaoColchetes -> [ Expressao ] LoopExpressaoColchetes
+LoopExpressaoColchetes -> 
+
+
+## ----------- TIPO ----------- ##    
+
+Tipo -> int
+Tipo -> char 
+Tipo -> void
+
+## ----------- BLOCO ----------- ##    
+
+Bloco -> { Comandos }
+
+## ----------- COMANDOS ----------- ##    
+
+Comandos -> ListaComandos Comandos
+Comandos -> 
+
+## ----------- LISTA COMANDOS ----------- ##    
+
+ListaComandos -> do Bloco while ( Expressao ) ;
+ListaComandos -> if ( Expressao ) Bloco ElseBloco
+ListaComandos -> while ( Expressao ) Bloco 
+ListaComandos -> for ( Expressao ; Expressao ; Expressao ) Bloco
+ListaComandos -> printf ( string VirgulaExpressao ) ;
+ListaComandos -> scanf ( string , & identificador ) ;
+ListaComandos -> exit ( Expressao ) ;
+ListaComandos -> return Expressao ;
+ListaComandos -> Expressao ;
+ListaComandos -> ;
+ListaComandos -> Bloco
+
+
+ElseBloco -> else Bloco
+ElseBloco ->
+
+VirgulaExpressao -> , Expressao
+VirgulaExpressao -> 
+
+Expressao -> 
+
+
+## ----------- EXPRESSAO ----------- ##    
+
+Expressao -> ExpressaoAtribuicao
+Expressao -> Expressao , ExpressaoAtribuicao
+
+
+
+## ----------- EXPRESSAO ATRIBUICAO ----------- ##    
+
+ExpressaoAtribuicao -> ExpressaoCondicional
+ExpressaoAtribuicao -> ExpressaoUnaria OperadoresIgual ExpressaoAtribuicao
+
+OperadoresIgual -> =
+OperadoresIgual -> +=
+OperadoresIgual -> -=
+
+
+
+## ----------- EXPRESSAO CONDICIONAL ----------- ##    
+
+ExpressaoCondicional -> ExpressaoORLogico
+ExpressaoCondicional -> ExpressaoORLogico ? Expressao : ExpressaoCondicional
+
+
+
+## ----------- EXPRESSAO OR LOGICO ----------- ##     
+
+ExpressaoORLogico -> ExpressaoANDLogico
+ExpressaoORLogico -> ExpressaoORLogico || ExpressaoANDLogico
+
+
+
+## ----------- EXPRESSAO AND LOGICO ----------- ##    
+
+ExpressaoANDLogico -> ExpressaoOR 
+ExpressaoANDLogico -> ExpressaoANDLogico && ExpressaoOR
+
+
+
+## ----------- EXPRESSAO OR ----------- ##    
+
+ExpressaoOR -> ExpressaoXOR
+ExpressaoOR -> ExpressaoOR | ExpressaoXOR
+
+
+
+## ----------- EXPRESSAO XOR ----------- ##    
+
+ExpressaoXOR -> ExpressaoAND 
+ExpressaoXOR -> ExpressaoXOR ^ ExpressaoAND
+
+## ----------- EXPRESSAO AND ----------- ##
+
+ExpressaoAND -> ExpressaoIgualdade
+ExpressaoAND -> ExpressaoAND & ExpressaoIgualdade
+
+## ----------- EXPRESSAO DE IGUALDADE ##
+
+ExpressaoIgualdade -> ExpressaoRelacional
+ExpressaoIgualdade -> ExpressaoIgualdade IgualOuDiferente ExpressaoRelacional
+
+IgualOuDiferente -> !=
+IgualOuDiferente -> ==
+
+## EXPRESSAO RELACIONAL ##    
+
+ExpressaoRelacional -> ExpressaoShift
+ExpressaoRelacional -> ExpressaoRelacional MaiorMenor ExpressaoShift
+
+MaiorMenor -> <
+MaiorMenor -> <=
+MaiorMenor -> >
+MaiorMenor -> >=
+
+## EXPRESSAO SHIFT ##    
+
+ExpressaoShift -> ExpressaoAditiva
+ExpressaoShift -> ExpressaoShift ShiftEsqDir ExpressaoAditiva
+
+ShiftEsqDir -> <<
+ShiftEsqDir -> >>
+
+
+## EXPRESSAO ADITIVA ##    
+
+ExpressaoAditiva -> ExpressaoMultiplicativa
+ExpressaoAditiva -> ExpressaoAditiva MaisOuMenos ExpressaoMultiplicativa
+
+MaisOuMenos -> +
+MaisOuMenos -> -
+
+## EXPRESSAO MULTIPLICATIVA ##     
+
+ExpressaoMultiplicativa -> ExpressaoCast
+ExpressaoMultiplicativa -> ExpressaoMultiplicativa DivMultResto ExpressaoCast
+
+DivMultResto -> *
+DivMultResto -> /
+DivMultResto -> %
+
+## EXPRESSOA CAST ##    
+
+ExpressaoCast -> ExpressaoUnaria
+ExpressaoCast -> ( Tipo Ponteiro ) ExpressaoCast
+
+## EXPRESSAO UNARIA ##    
+
+ExpressaoUnaria -> ExpressaoPosFixa
+ExpressaoUnaria -> ++ ExpressaoUnaria
+ExpressaoUnaria -> -- ExpressaoUnaria
+ExpressaoUnaria -> OperadoresUnarios ExpressaoCast
+
+OperadoresUnarios -> &
+OperadoresUnarios -> *
+OperadoresUnarios -> +
+OperadoresUnarios -> -
+OperadoresUnarios -> ~
+OperadoresUnarios -> !
+
+
+## EXPRESSAO POS FIXA ##     
+
+ExpressaoPosFixa -> ExpressaoPrimaria
+ExpressaoPosFixa -> ExpressaoPosFixa DecisaoExpressaoPosFixa
+
+DecisaoExpressaoPosFixa -> [ Expressao ]
+DecisaoExpressaoPosFixa -> ++
+DecisaoExpressaoPosFixa -> -- 
+DecisaoExpressaoPosFixa -> ( VirgulaExpressaoAtribuicao )
+
+VirgulaExpressaoAtribuicao -> ExpressaoAtribuicao , VirgulaExpressaoAtribuicao
+VirgulaExpressaoAtribuicao ->
+
+
+
+## EXPRESSAO PRIMARIA ##    
+
+ExpressaoPrimaria -> identificador
+ExpressaoPrimaria -> Numero
+ExpressaoPrimaria -> caracter
+ExpressaoPrimaria -> string
+ExpressaoPrimaria -> ( Expressao )
+
+## NUMERO ##   
+
+Numero -> NUM_integer
+Numero -> NUM_HEXA
+Numero -> NUM_OCTAL
+
